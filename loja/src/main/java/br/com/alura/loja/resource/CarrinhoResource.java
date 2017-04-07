@@ -3,7 +3,6 @@ package br.com.alura.loja.resource;
 import br.com.alura.loja.dao.CarrinhoDAO;
 import br.com.alura.loja.modelo.Carrinho;
 import br.com.alura.loja.modelo.Produto;
-import com.thoughtworks.xstream.XStream;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -18,15 +17,14 @@ public class CarrinhoResource {
     @Path("{id}")
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public String busca(@PathParam("id") long id) {
+    public Carrinho busca(@PathParam("id") long id) {
         CarrinhoDAO carrinhoDAO = new CarrinhoDAO();
-        return carrinhoDAO.busca(id).toXml();
+        return carrinhoDAO.busca(id);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_XML)
-    public Response adiciona(String conteudo) throws URISyntaxException {
-        Carrinho carrinho = (Carrinho) new XStream().fromXML(conteudo);
+    public Response adiciona(Carrinho carrinho) throws URISyntaxException {
         new CarrinhoDAO().adiciona(carrinho);
         URI uri = new URI("/carrinhos/" + carrinho.getId());
         return Response.created(uri).build();
@@ -43,9 +41,8 @@ public class CarrinhoResource {
     @Path("{id}/produtos/{produtoId}")
     @PUT
     @Consumes(MediaType.APPLICATION_XML)
-    public Response alteraProduto(@PathParam("id") long id, @PathParam("produtoId") long produtoId, String conteudo) {
+    public Response alteraProduto(@PathParam("id") long id, @PathParam("produtoId") long produtoId, Produto produto) {
         Carrinho carrinho = new CarrinhoDAO().busca(id);
-        Produto produto = (Produto) new XStream().fromXML(conteudo);
         carrinho.troca(produto);
         return Response.ok().build();
     }
@@ -53,9 +50,8 @@ public class CarrinhoResource {
     @Path("{id}/produtos/{produtoId}/quantidade")
     @PUT
     @Consumes(MediaType.APPLICATION_XML)
-    public Response alteraQuantidadeDeProduto(@PathParam("id") long id, @PathParam("produtoId") long produtoId, String conteudo) {
+    public Response alteraQuantidadeDeProduto(@PathParam("id") long id, @PathParam("produtoId") long produtoId, Produto produto) {
         Carrinho carrinho = new CarrinhoDAO().busca(id);
-        Produto produto = (Produto) new XStream().fromXML(conteudo);
         carrinho.trocaQuantidade(produto);
         return Response.ok().build();
     }

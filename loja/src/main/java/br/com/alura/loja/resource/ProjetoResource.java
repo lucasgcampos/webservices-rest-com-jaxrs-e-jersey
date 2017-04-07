@@ -1,8 +1,7 @@
 package br.com.alura.loja.resource;
 
-import br.com.alura.loja.dao.CarrinhoDAO;
 import br.com.alura.loja.dao.ProjetoDAO;
-import br.com.alura.loja.modelo.Carrinho;
+import br.com.alura.loja.modelo.Produto;
 import br.com.alura.loja.modelo.Projeto;
 import com.thoughtworks.xstream.XStream;
 
@@ -18,18 +17,15 @@ public class ProjetoResource {
     @Path("{id}")
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public String busca(@PathParam("id") long id) {
+    public Projeto busca(@PathParam("id") long id) {
         ProjetoDAO projetoDAO = new ProjetoDAO();
-        return projetoDAO.busca(id).toXml();
+        return projetoDAO.busca(id);
     }
 
     @POST
     @Produces(value = MediaType.APPLICATION_XML)
-    public Response adiciona(String conteudo) throws URISyntaxException {
-        Projeto projeto = (Projeto) new XStream().fromXML(conteudo);
-
+    public Response adiciona(Projeto projeto) throws URISyntaxException {
         new ProjetoDAO().adiciona(projeto);
-
         return Response.created(new URI("/projetos/" + projeto.getId())).build();
     }
 
